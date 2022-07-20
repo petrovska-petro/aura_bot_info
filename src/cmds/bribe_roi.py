@@ -58,15 +58,10 @@ async def _bribe_roi_estimation(ctx, arg1, args2):
             },
         },
     ).json()["data"]["votes"][0]
-
-    print(response_delegate_voter)
-    print(str(target_index))
     pct_from_delegate = (
         response_delegate_voter["choice"].get(str(target_index + 1), 0) / 100
     )
-    print("pct_from_delegate", pct_from_delegate)
     delegate_voting_for_badger_gauge = response_delegate_voter["vp"] * pct_from_delegate
-    print(delegate_voting_for_badger_gauge)
     aura_voting_for_our_bribe = (
         voting_for_badger_pool - delegate_voting_for_badger_gauge
     ) * 1e18
@@ -120,7 +115,7 @@ async def _bribe_roi_estimation(ctx, arg1, args2):
     # calc ratio of aura minted per bal
     total_cliffs = aura.totalCliffs()
     cliff_reduction = aura.reductionPerCliff() / 1e18
-    aura_total_supply = aura.totalSupply() / 1e18
+    aura_total_supply = aura.totalSupply(block_identifier=proposal_block_height) / 1e18
     init_mint_amount = aura.INIT_MINT_AMOUNT() / 1e18
     aura_mint_ratio = (
         (total_cliffs - (aura_total_supply - init_mint_amount) / cliff_reduction) * 2.5
